@@ -7,36 +7,67 @@
  </head>
  <form>
  	<legend>Choose a college or colleges to compare: </legend>
+ 	<select id="college" multiple="multiple">
+ 		<option>Smith</option>
+ 		<option>Mount Holyoke</option>
+ 		<option>Amherst</option>
+ 		<option>UMass Amherst</option>
+ 		<option>Hampshire</option>
+ 	</select>
  	<div>
- 		<input type="checkbox" id="Smith" name="college" value="Smith">
- 		<label for="Smith">Smith</label>
- 	</div>
- 	<div>
- 		<input type="checkbox" id="Mt. Holyoke" name="college" value="Mt. Holyoke">
- 		<label for="Mt. Holyoke">Mt. Holyoke</label>
- 	</div>
- 	<div>
- 		<input type="checkbox" id="Amherst" name="college" value="Amherst">
- 		<label for="Amherst">Amherst</label>
- 	</div>
- 	<div>
- 		<input type="checkbox" id="UMass Amherst" name="college" value="UMass Amherst">
- 		<label for="UMass Amherst">UMass Amherst</label>
- 	</div>
- 	<div>
- 		<input type="checkbox" id="Hampshire" name="college" value="Hampshire">
- 		<label for="Hampshire">Hampshire</label>
- 	</div>
- 	<div>
- 		<button type="submit">Compare</button>
+ 		<button>See projected college costs</button>
  	</div>
  </form>
- 
  <body>
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  	<script src="https://d3js.org/d3.v5.min.js"></script>
  	<script>
- 		"use strict"; // enable modern JS features
+ 		"use strict";
+ 		let colleges = ["Smith", "Mount Holyoke", "Amherst", "UMass Amherst", "Hampshire"]
+ 		initialize();
 
+		function initialize() {
+	 		let reqColleges = $('#college');
+	 		let lastColleges = colleges.value;
+	 		let selectedColleges;
+	 		let searchBtn = document.querySelector('button');
+	 		searchBtn.onclick = selectCollege;
+
+			function selectCollege(e) {
+				selectedColleges = [];
+
+				e.preventDefault();
+				if (reqColleges.val() === lastColleges) {
+					return;
+				} else {
+					lastColleges = reqColleges.value;
+					if (reqColleges.val().length > 0) {
+						for (let i = 0; i < colleges.length; i++) {
+							for(let h = 0; h < reqColleges.val().length; h++) {
+								if(colleges[i] == reqColleges.val()[h]) {
+									selectedColleges.push(colleges[i]);
+								}
+							}
+							printColleges();
+						}
+					}
+				}
+			}
+
+			function printColleges() {
+				for (let j = 0; j < selectedColleges.length; j++) {
+					console.log(selectedColleges[j]);
+				}
+			}
+
+			function drawAxes() {
+
+			}
+
+			function drawLines() {
+
+			}
+		}
  	</script>
 
  </body>
