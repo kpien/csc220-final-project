@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <!--Heidi Tsang & Kelly Pien-->
+<style>
+	.axis .domain {
+	  display: none;
+	}
+</style>
 <html>
  <head>
  	<meta charset="utf-8">
  	<h1>College Cost Comparison</h1>
  </head>
+ 
  <form>
  	<legend>Choose a college or colleges to compare: </legend>
- 	<select id="college" multiple="multiple">
- 		<option>Smith</option>
- 		<option>Mount Holyoke</option>
- 		<option>Amherst</option>
- 		<option>UMass Amherst</option>
- 		<option>Hampshire</option>
+ 	<select id="collegeMenu" multiple="multiple">
+ 		<option>Smith College</option>
+ 		<option>Mount Holyoke College</option>
+ 		<option>Amherst College</option>
+ 		<option>University of Massachusetts-Amherst</option>
+ 		<option>Hampshire College</option>
  	</select>
- 	<div>
+ </form>
+ 	
+<div>
  		<button>See projected college costs</button>
  	</div>
- </form>
+
  <body>
+ 	<!--
+ 	<div id="collegeDropdown"></div>
+  <div id="yearDropdown"></div>
+  -->
+ 	<svg width="800" height="600"></svg>
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
- 	<script src="https://d3js.org/d3.v5.min.js"></script>
+ 	<script src="https://d3js.org/d3.v4.min.js"></script>
  	<script>
- 		"use strict";
- 		let colleges = ["Smith", "Mount Holyoke", "Amherst", "UMass Amherst", "Hampshire"]
+ 		//"use strict";
+ 		let colleges = ["Smith College", "Mount Holyoke College", "Amherst College", "University of Massachusetts-Amherst", "Hampshire College"]
  		initialize();
 
 		function initialize() {
-	 		let reqColleges = $('#college');
+	 		let reqColleges = $('#collegeMenu');
 	 		let lastColleges = colleges.value;
 	 		let selectedColleges;
 	 		let searchBtn = document.querySelector('button');
@@ -48,16 +61,128 @@
 									selectedColleges.push(colleges[i]);
 								}
 							}
-							printColleges();
+							console.log(selectedColleges);
+							drawChart();
 						}
 					}
 				}
-			}
+			 }
 
-			function printColleges() {
-				for (let j = 0; j < selectedColleges.length; j++) {
-					console.log(selectedColleges[j]);
-				}
+			function drawChart() {
+				//stacked bar chart adapted from https://bl.ocks.org/mbostock/3886208
+				let svg = d3.select("svg"),
+			    margin = {top: 20, right: 20, bottom: 30, left: 40},
+			    width = +svg.attr("width") - margin.left - margin.right,
+			    height = +svg.attr("height") - margin.top - margin.bottom,
+			    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+				let x = d3.scaleBand()
+				    .rangeRound([0, width])
+				    .paddingInner(0.05)
+				    .align(0.1);
+
+				let y = d3.scaleLinear()
+				    .rangeRound([height, 0]);
+
+				let z = d3.scaleOrdinal()
+				    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+				let filteredData = [];
+
+				d3.csv("collegeData.csv", function(d, i, columns) {
+				  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
+				  d.total = t;
+				  return d;
+				}, function(error, data) {
+				  if (error) throw error;
+
+				  let keys = data.columns.slice(1);
+
+				  data.sort(function(a, b) { return b.total - a.total; });
+				  x.domain(data.map(function(d) { return d.INSTNM; }));
+				  y.domain([0, d3.max(data, function(d) { return d.total; })]).nice();
+				  z.domain(keys);
+
+				  g.append("g")
+				    .selectAll("g")
+				    .data(d3.stack().keys(keys)(data))
+				    .enter().append("g")
+				      .attr("fill", function(d) { return z(d.key); })
+				    .selectAll("rect")
+				    .data(function(d) { return d; })
+				    .enter().append("rect")
+				      .attr("x", function(d) { return x(d.data.INSTNM); })
+				      .attr("y", function(d) { return y(d[1]); })
+				      .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+				      .attr("width", x.bandwidth());
+
+				  g.append("g")
+				      .attr("class", "axis")
+				      .attr("transform", "translate(0," + height + ")")
+				      .call(d3.axisBottom(x));
+
+				  g.append("g")
+				      .attr("class", "axis")
+				      .call(d3.axisLeft(y).ticks(null, "s"))
+				    .append("text")
+				      .attr("x", 2)
+				      .attr("y", y(y.ticks().pop()) + 0.5)
+				      .attr("dy", "0.32em")
+				      .attr("fill", "#000")
+				      .attr("text-anchor", "start")
+				      .text("Total Estimated Cost of Attendance");
+
+				  let legend = g.append("g")
+				      .attr("font-family", "sans-serif")
+				      .attr("font-size", 10)
+				      .attr("text-anchor", "end")
+				    .selectAll("g")
+				    .data(keys.slice().reverse())
+				    .enter().append("g")
+				      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+				  legend.append("rect")
+				      .attr("x", width - 19)
+				      .attr("width", 19)
+				      .attr("height", 19)
+				      .attr("fill", z);
+
+				  legend.append("text")
+				      .attr("x", width - 24)
+				      .attr("y", 9.5)
+				      .attr("dy", "0.32em")
+				      .text(function(d) { return d; });
+
+				   // let collegeMenu = d3.select("#collegeDropdown")
+				   // collegeMenu
+				   // 		.append("select")
+				   // 		.selectAll("option")
+				   // 		.data(data)
+				   // 		.enter()
+				   // 		.append("option")
+				   // 		.attr("value", function(d) {
+				   // 			//console.log(d.INSTNM)
+				   // 			return d.INSTNM;
+				   // 		})
+				   // 		.text(function(d) {
+				   // 			return d.INSTNM;
+				   // 		})
+
+				   d3.selectAll('g')
+				   	.filter(function(d, i) {
+				   		//console.log(d);
+				   		return d
+				   // 		for (let j = 0; j < d.length; j++) {
+							// for (let k = 0; k < selectedColleges.length; k++) {
+							// 	if (d[j].college == selectedColleges[k]) {
+							// 		console.log(d);
+									//return d;
+									//filteredData.push(data[j]);
+						// 		}
+						// 	}
+						// }
+				});
+			});
 			}
 
 			function drawAxes() {
