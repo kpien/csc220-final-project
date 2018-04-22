@@ -10,27 +10,16 @@
  	<meta charset="utf-8">
  	<h1>College Cost Comparison</h1>
  </head>
- 
- <form>
- 	<legend>Choose a college or colleges to compare: </legend>
- 	<select id="collegeMenu" multiple="multiple">
- 		<option>Smith College</option>
- 		<option>Mount Holyoke College</option>
- 		<option>Amherst College</option>
- 		<option>University of Massachusetts-Amherst</option>
- 		<option>Hampshire College</option>
- 	</select>
- </form>
- 	
-<div>
+ <div>
  		<button>See projected college costs</button>
- 	</div>
-
+ </div>
  <body>
- 	<!--
- 	<div id="collegeDropdown"></div>
-  <div id="yearDropdown"></div>
-  -->
+ 	<input type="checkbox" class="collegeBox" value="Smith College">Smith College
+ 	<input type="checkbox" class="collegeBox" value="Mount Holyoke College">Mount Holyoke College
+ 	<input type="checkbox" class="collegeBox" value="Amherst College">Amherst College
+ 	<input type="checkbox" class="collegeBox" value="University of Massachusetts-Amherst">University of Massachusetts-Amherst
+ 	<input type="checkbox" class="collegeBox" value="Hampshire College">Hampshire College
+
  	<svg width="800" height="600"></svg>
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  	<script src="https://d3js.org/d3.v4.min.js"></script>
@@ -40,35 +29,18 @@
  		initialize();
 
 		function initialize() {
-	 		let reqColleges = $('#collegeMenu');
-	 		let lastColleges = colleges.value;
-	 		let selectedColleges;
 	 		let searchBtn = document.querySelector('button');
 	 		searchBtn.onclick = selectCollege;
 
 			function selectCollege(e) {
-				selectedColleges = [];
-
+				let selectedColleges = [];
 				e.preventDefault();
-				if (reqColleges.val() === lastColleges) {
-					return;
-				} else {
-					lastColleges = reqColleges.value;
-					if (reqColleges.val().length > 0) {
-						for (let i = 0; i < colleges.length; i++) {
-							for(let h = 0; h < reqColleges.val().length; h++) {
-								if(colleges[i] == reqColleges.val()[h]) {
-									selectedColleges.push(colleges[i]);
-								}
-							}
-							console.log(selectedColleges);
-							drawChart();
-						}
-					}
-				}
+				d3.selectAll('.collegeBox').on('change', drawChart());
+				drawChart();
 			 }
 
 			function drawChart() {
+				d3.selectAll("svg > *").remove();
 				//stacked bar chart adapted from https://bl.ocks.org/mbostock/3886208
 				let svg = d3.select("svg"),
 			    margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -87,8 +59,6 @@
 				let z = d3.scaleOrdinal()
 				    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-				let filteredData = [];
-
 				d3.csv("collegeData.csv", function(d, i, columns) {
 				  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
 				  d.total = t;
@@ -96,16 +66,37 @@
 				}, function(error, data) {
 				  if (error) throw error;
 
+
+
+				  let newData;
+				  selectedColleges = [];
+					d3.selectAll('.collegeBox').each(function(d) {
+						cb = d3.select(this);
+						if(cb.property("checked")) {
+							selectedColleges.push(cb.property("value"));
+						}
+					});
+
+					if(selectedColleges.length > 0) {
+						newData = data.filter(function(d, i) {
+							return selectedColleges.includes(d.INSTNM);
+						})
+					} else {
+						newData = data;
+					}
+
+
+
 				  let keys = data.columns.slice(1);
 
-				  data.sort(function(a, b) { return b.total - a.total; });
-				  x.domain(data.map(function(d) { return d.INSTNM; }));
-				  y.domain([0, d3.max(data, function(d) { return d.total; })]).nice();
+				  newData.sort(function(a, b) { return b.total - a.total; });
+				  x.domain(newData.map(function(d) { return d.INSTNM; }));
+				  y.domain([0, d3.max(newData, function(d) { return d.total; })]).nice();
 				  z.domain(keys);
 
 				  g.append("g")
 				    .selectAll("g")
-				    .data(d3.stack().keys(keys)(data))
+				    .data(d3.stack().keys(keys)(newData))
 				    .enter().append("g")
 				      .attr("fill", function(d) { return z(d.key); })
 				    .selectAll("rect")
@@ -153,35 +144,6 @@
 				      .attr("dy", "0.32em")
 				      .text(function(d) { return d; });
 
-				   // let collegeMenu = d3.select("#collegeDropdown")
-				   // collegeMenu
-				   // 		.append("select")
-				   // 		.selectAll("option")
-				   // 		.data(data)
-				   // 		.enter()
-				   // 		.append("option")
-				   // 		.attr("value", function(d) {
-				   // 			//console.log(d.INSTNM)
-				   // 			return d.INSTNM;
-				   // 		})
-				   // 		.text(function(d) {
-				   // 			return d.INSTNM;
-				   // 		})
-
-				   d3.selectAll('g')
-				   	.filter(function(d, i) {
-				   		//console.log(d);
-				   		return d
-				   // 		for (let j = 0; j < d.length; j++) {
-							// for (let k = 0; k < selectedColleges.length; k++) {
-							// 	if (d[j].college == selectedColleges[k]) {
-							// 		console.log(d);
-									//return d;
-									//filteredData.push(data[j]);
-						// 		}
-						// 	}
-						// }
-				});
 			});
 			}
 
@@ -189,7 +151,7 @@
 
 			}
 
-			function drawLines() {
+			function drawBars() {
 
 			}
 		}
