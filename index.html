@@ -11,21 +11,35 @@
  	<h1>College Cost Comparison</h1>
  </head>
  <div>
- 		<button>See projected college costs</button>
+ 	<button>See projected college costs</button>
  </div>
  <body>
+ 	<p>Select colleges to compare</p>
  	<input type="checkbox" class="collegeBox" value="Smith College">Smith College
  	<input type="checkbox" class="collegeBox" value="Mount Holyoke College">Mount Holyoke College
  	<input type="checkbox" class="collegeBox" value="Amherst College">Amherst College
  	<input type="checkbox" class="collegeBox" value="University of Massachusetts-Amherst">University of Massachusetts-Amherst
  	<input type="checkbox" class="collegeBox" value="Hampshire College">Hampshire College
+ 	<br>
+
+ 	<p>Select years</p> <!-- change to select start yr??? -->
+ 	<input type="checkbox" class="yearBox" value="2009-2010">2009-2010
+ 	<input type="checkbox" class="yearBox" value="2010-2011">2010-2011
+ 	<input type="checkbox" class="yearBox" value="2011-2012">2011-2012
+ 	<input type="checkbox" class="yearBox" value="2012-2013">2012-2013
+ 	<input type="checkbox" class="yearBox" value="2013-2014">2013-2014
+ 	<input type="checkbox" class="yearBox" value="2014-2015">2014-2015
+ 	<input type="checkbox" class="yearBox" value="2015-2016">2015-2016
+ 	<input type="checkbox" class="yearBox" value="2016-2017">2016-2017
+ 	<input type="checkbox" class="yearBox" value="2017-2018">2017-2018
+ 	<input type="checkbox" class="yearBox" value="2018-2019">2018-2019
+ 	<br>
 
  	<svg width="800" height="600"></svg>
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  	<script src="https://d3js.org/d3.v4.min.js"></script>
  	<script>
  		//"use strict";
- 		let colleges = ["Smith College", "Mount Holyoke College", "Amherst College", "University of Massachusetts-Amherst", "Hampshire College"]
  		initialize();
 
 		function initialize() {
@@ -33,13 +47,13 @@
 	 		searchBtn.onclick = selectCollege;
 
 			function selectCollege(e) {
-				let selectedColleges = [];
 				e.preventDefault();
 				d3.selectAll('.collegeBox').on('change', drawChart());
 				drawChart();
 			 }
 
 			function drawChart() {
+				//remove prior graph
 				d3.selectAll("svg > *").remove();
 				//stacked bar chart adapted from https://bl.ocks.org/mbostock/3886208
 				let svg = d3.select("svg"),
@@ -66,10 +80,9 @@
 				}, function(error, data) {
 				  if (error) throw error;
 
-
-
+				  //find checked colleges
 				  let newData;
-				  selectedColleges = [];
+				  let selectedColleges = [];
 					d3.selectAll('.collegeBox').each(function(d) {
 						cb = d3.select(this);
 						if(cb.property("checked")) {
@@ -77,6 +90,17 @@
 						}
 					});
 
+					//find checked years
+					let selectedYears = [];
+					d3.selectAll('.yearBox').each(function(d) {
+						cb = d3.select(this);
+						if(cb.property("checked")) {
+							selectedYears.push(cb.property("value"));
+						}
+					});
+
+					//multiple checkbox filtering adapted from https://bl.ocks.org/johnnygizmo/531991a77047112b7ca89f78b840fba5
+					//filter data to include only selected colleges
 					if(selectedColleges.length > 0) {
 						newData = data.filter(function(d, i) {
 							return selectedColleges.includes(d.INSTNM);
@@ -85,9 +109,26 @@
 						newData = data;
 					}
 
+					//filter data to include only selected years
+					let yrFilteredData = [];
+					for(let j = 0; j < newData.length; j++) {
+						let yrFilteredOneCollegeData = {"INSTNM": newData[j]["INSTNM"]};
+						let selCosts = [];
+						Object.keys(newData[j]).forEach(function(key) {
+							if (selectedYears.includes(key)) {
+								yrFilteredOneCollegeData[key] = newData[j][key];
+								selCosts.push(newData[j][key]);
+							}
+						})
+						//add total
+						let sum = selCosts.reduce(function(a, b) {return a + b;},0);
+						yrFilteredOneCollegeData["total"] = sum;
+						yrFilteredData.push(yrFilteredOneCollegeData);
+					}
+					newData = yrFilteredData;
 
-
-				  let keys = data.columns.slice(1);
+					//keys=years
+				  let keys = selectedYears; //data.columns.slice(1);
 
 				  newData.sort(function(a, b) { return b.total - a.total; });
 				  x.domain(newData.map(function(d) { return d.INSTNM; }));
@@ -143,7 +184,6 @@
 				      .attr("y", 9.5)
 				      .attr("dy", "0.32em")
 				      .text(function(d) { return d; });
-
 			});
 			}
 
