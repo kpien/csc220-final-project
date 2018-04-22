@@ -20,9 +20,8 @@
  	<input type="checkbox" class="collegeBox" value="Amherst College">Amherst College
  	<input type="checkbox" class="collegeBox" value="University of Massachusetts-Amherst">University of Massachusetts-Amherst
  	<input type="checkbox" class="collegeBox" value="Hampshire College">Hampshire College
- 	<br>
 
- 	<p>Select years</p> <!-- change to select start yr??? -->
+ 	<p>Select years of attendance</p> <!-- change to select start yr??? -->
  	<input type="checkbox" class="yearBox" value="2009-2010">2009-2010
  	<input type="checkbox" class="yearBox" value="2010-2011">2010-2011
  	<input type="checkbox" class="yearBox" value="2011-2012">2011-2012
@@ -33,167 +32,162 @@
  	<input type="checkbox" class="yearBox" value="2016-2017">2016-2017
  	<input type="checkbox" class="yearBox" value="2017-2018">2017-2018
  	<input type="checkbox" class="yearBox" value="2018-2019">2018-2019
- 	<br>
 
- 	<svg width="800" height="600"></svg>
+ 	<svg width="850" height="330"></svg>
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  	<script src="https://d3js.org/d3.v4.min.js"></script>
  	<script>
  		//"use strict";
- 		initialize();
+ 		let searchBtn = document.querySelector('button');
+ 		searchBtn.onclick = selectCollege;
 
-		function initialize() {
-	 		let searchBtn = document.querySelector('button');
-	 		searchBtn.onclick = selectCollege;
+		function selectCollege(e) {
+			e.preventDefault();
+			d3.selectAll('.collegeBox').on('change', drawChart());
+			drawChart();
+		 }
 
-			function selectCollege(e) {
-				e.preventDefault();
-				d3.selectAll('.collegeBox').on('change', drawChart());
-				drawChart();
-			 }
+		function drawChart() {
+			//remove prior graph
+			d3.selectAll("svg > *").remove();
+			//stacked bar chart adapted from https://bl.ocks.org/mbostock/3886208
+			let svg = d3.select("svg"),
+		    margin = {top: 20, right: 20, bottom: 30, left: 40},
+		    width = +svg.attr("width") - margin.left - margin.right,
+		    height = +svg.attr("height") - margin.top - margin.bottom,
+		    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-			function drawChart() {
-				//remove prior graph
-				d3.selectAll("svg > *").remove();
-				//stacked bar chart adapted from https://bl.ocks.org/mbostock/3886208
-				let svg = d3.select("svg"),
-			    margin = {top: 20, right: 20, bottom: 30, left: 40},
-			    width = +svg.attr("width") - margin.left - margin.right,
-			    height = +svg.attr("height") - margin.top - margin.bottom,
-			    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			let x = d3.scaleBand()
+			    .rangeRound([0, width-80])
+			    .paddingInner(0.05)
+			    .align(0.1);
 
-				let x = d3.scaleBand()
-				    .rangeRound([0, width])
-				    .paddingInner(0.05)
-				    .align(0.1);
+			let y = d3.scaleLinear()
+			    .rangeRound([height, 0]);
 
-				let y = d3.scaleLinear()
-				    .rangeRound([height, 0]);
+			let z = d3.scaleOrdinal()
+			    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-				let z = d3.scaleOrdinal()
-				    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+			d3.csv("collegeData.csv", function(d, i, columns) {
+			  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
+			  d.total = t;
+			  return d;
+			}, function(error, data) {
+			  if (error) throw error;
 
-				d3.csv("collegeData.csv", function(d, i, columns) {
-				  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
-				  d.total = t;
-				  return d;
-				}, function(error, data) {
-				  if (error) throw error;
-
-				  //find checked colleges
-				  let newData;
-				  let selectedColleges = [];
-					d3.selectAll('.collegeBox').each(function(d) {
-						cb = d3.select(this);
-						if(cb.property("checked")) {
-							selectedColleges.push(cb.property("value"));
-						}
-					});
-
-					//find checked years
-					let selectedYears = [];
-					d3.selectAll('.yearBox').each(function(d) {
-						cb = d3.select(this);
-						if(cb.property("checked")) {
-							selectedYears.push(cb.property("value"));
-						}
-					});
-
-					//multiple checkbox filtering adapted from https://bl.ocks.org/johnnygizmo/531991a77047112b7ca89f78b840fba5
-					//filter data to include only selected colleges
-					if(selectedColleges.length > 0) {
-						newData = data.filter(function(d, i) {
-							return selectedColleges.includes(d.INSTNM);
-						})
-					} else {
-						newData = data;
+			  //find checked colleges
+			  let filteredData;
+			  let selectedColleges = [];
+				d3.selectAll('.collegeBox').each(function(d) {
+					cb = d3.select(this);
+					if(cb.property("checked")) {
+						selectedColleges.push(cb.property("value"));
 					}
+				});
 
-					//filter data to include only selected years
-					let yrFilteredData = [];
-					for(let j = 0; j < newData.length; j++) {
-						let yrFilteredOneCollegeData = {"INSTNM": newData[j]["INSTNM"]};
-						let selCosts = [];
-						Object.keys(newData[j]).forEach(function(key) {
-							if (selectedYears.includes(key)) {
-								yrFilteredOneCollegeData[key] = newData[j][key];
-								selCosts.push(newData[j][key]);
-							}
-						})
-						//add total
-						let sum = selCosts.reduce(function(a, b) {return a + b;},0);
-						yrFilteredOneCollegeData["total"] = sum;
-						yrFilteredData.push(yrFilteredOneCollegeData);
+				//find checked years
+				let selectedYears = [];
+				d3.selectAll('.yearBox').each(function(d) {
+					cb = d3.select(this);
+					if(cb.property("checked")) {
+						selectedYears.push(cb.property("value"));
 					}
-					newData = yrFilteredData;
+				});
 
-					//keys=years
-				  let keys = selectedYears; //data.columns.slice(1);
+				//multiple checkbox filtering adapted from https://bl.ocks.org/johnnygizmo/531991a77047112b7ca89f78b840fba5
+				//filter data to include only selected colleges
+				if(selectedColleges.length > 0) {
+					filteredData = data.filter(function(d, i) {
+						return selectedColleges.includes(d.INSTNM);
+					})
+				} else {
+					filteredData = data;
+				}
 
-				  newData.sort(function(a, b) { return b.total - a.total; });
-				  x.domain(newData.map(function(d) { return d.INSTNM; }));
-				  y.domain([0, d3.max(newData, function(d) { return d.total; })]).nice();
-				  z.domain(keys);
+				//filter data to include only selected years
+				let yrFilteredData = [];
+				for(let j = 0; j < filteredData.length; j++) {
+					let yrFilteredOneCollegeData = {"INSTNM": filteredData[j]["INSTNM"]};
+					let selCosts = [];
+					Object.keys(filteredData[j]).forEach(function(key) {
+						if (selectedYears.includes(key)) {
+							yrFilteredOneCollegeData[key] = filteredData[j][key];
+							selCosts.push(filteredData[j][key]);
+						}
+					})
+					//add total
+					let sum = selCosts.reduce(function(a, b) {return a + b;},0);
+					yrFilteredOneCollegeData["total"] = sum;
+					yrFilteredData.push(yrFilteredOneCollegeData);
+				}
+				filteredData = yrFilteredData;
 
-				  g.append("g")
-				    .selectAll("g")
-				    .data(d3.stack().keys(keys)(newData))
-				    .enter().append("g")
-				      .attr("fill", function(d) { return z(d.key); })
-				    .selectAll("rect")
-				    .data(function(d) { return d; })
-				    .enter().append("rect")
-				      .attr("x", function(d) { return x(d.data.INSTNM); })
-				      .attr("y", function(d) { return y(d[1]); })
-				      .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-				      .attr("width", x.bandwidth());
+				//keys=years
+			  let keys = selectedYears;
 
-				  g.append("g")
-				      .attr("class", "axis")
-				      .attr("transform", "translate(0," + height + ")")
-				      .call(d3.axisBottom(x));
+			  filteredData.sort(function(a, b) { return b.total - a.total; });
+			  x.domain(filteredData.map(function(d) { return d.INSTNM; }));
+			  y.domain([0, d3.max(filteredData, function(d) { return d.total; })]).nice();
+			  z.domain(keys);
 
-				  g.append("g")
-				      .attr("class", "axis")
-				      .call(d3.axisLeft(y).ticks(null, "s"))
-				    .append("text")
-				      .attr("x", 2)
-				      .attr("y", y(y.ticks().pop()) + 0.5)
-				      .attr("dy", "0.32em")
-				      .attr("fill", "#000")
-				      .attr("text-anchor", "start")
-				      .text("Total Estimated Cost of Attendance");
+			  g.append("g")
+			    .selectAll("g")
+			    .data(d3.stack().keys(keys)(filteredData))
+			    .enter().append("g")
+			      .attr("fill", function(d) { return z(d.key); })
+			    .selectAll("rect")
+			    .data(function(d) { return d; })
+			    .enter().append("rect")
+			      .attr("x", function(d) { return x(d.data.INSTNM); })
+			      .attr("y", function(d) { return y(d[1]); })
+			      .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+			      .attr("width", x.bandwidth());
 
-				  let legend = g.append("g")
-				      .attr("font-family", "sans-serif")
-				      .attr("font-size", 10)
-				      .attr("text-anchor", "end")
-				    .selectAll("g")
-				    .data(keys.slice().reverse())
-				    .enter().append("g")
-				      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+			  g.append("g")
+			      .attr("class", "axis")
+			      .attr("transform", "translate(0," + height + ")")
+			      .call(d3.axisBottom(x));
 
-				  legend.append("rect")
-				      .attr("x", width - 19)
-				      .attr("width", 19)
-				      .attr("height", 19)
-				      .attr("fill", z);
+			  g.append("g")
+			      .attr("class", "axis")
+			      .call(d3.axisLeft(y).ticks(null, "s"))
+			    .append("text")
+			      .attr("x", 2)
+			      .attr("y", y(y.ticks().pop()) + 0.5)
+			      .attr("dy", "0.32em")
+			      .attr("fill", "#000")
+			      .attr("text-anchor", "start")
+			      .text("Total Estimated Cost of Attendance");
 
-				  legend.append("text")
-				      .attr("x", width - 24)
-				      .attr("y", 9.5)
-				      .attr("dy", "0.32em")
-				      .text(function(d) { return d; });
-			});
-			}
+			  let legend = g.append("g")
+			      .attr("font-family", "sans-serif")
+			      .attr("font-size", 10)
+			      .attr("text-anchor", "end")
+			    .selectAll("g")
+			    .data(keys.slice().reverse())
+			    .enter().append("g")
+			      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-			function drawAxes() {
+			  legend.append("rect")
+			      .attr("x", width - 19)
+			      .attr("width", 19)
+			      .attr("height", 19)
+			      .attr("fill", z);
 
-			}
+			  legend.append("text")
+			      .attr("x", width - 24)
+			      .attr("y", 9.5)
+			      .attr("dy", "0.32em")
+			      .text(function(d) { return d; });
+		});
+		}
 
-			function drawBars() {
+		function drawAxes() {
 
-			}
+		}
+
+		function drawBars() {
+
 		}
  	</script>
 
