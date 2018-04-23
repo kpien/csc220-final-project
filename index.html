@@ -102,9 +102,6 @@
 	  transform: rotate(45deg);
 	} 
 
-	.buttonDiv {
-		float: right;
-	}
 	.checkboxes {
 		float: right;
 	}
@@ -140,7 +137,7 @@
 		<span class="checkmark"></span>
  	</label>
 
- 	<p>Select years of attendance</p> <!-- change to select start yr??? -->
+ 	<p>Select start year</p> <!-- change to select start yr??? -->
  	<label class="container">2009-2010
  		<input type="checkbox" class="yearBox" value="2009-2010">
  		<span class="checkmark"></span>
@@ -234,7 +231,12 @@
 				d3.selectAll('.yearBox').each(function(d) {
 					cb = d3.select(this);
 					if(cb.property("checked")) {
-						selectedYears.push(cb.property("value"));
+						startYr = parseInt(cb.property("value").split("-")[0]);
+						for(let s=1; s < 5; s++) {
+							let year = startYr.toString() + "-" + (startYr+1).toString();
+							selectedYears.push(year);
+							startYr++;
+						}
 					}
 				});
 
