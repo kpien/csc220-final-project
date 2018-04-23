@@ -4,6 +4,102 @@
 	.axis .domain {
 	  display: none;
 	}
+
+	h1 {
+		background: linear-gradient(#AFEEEE, #B2FFFF);
+		font-family: Arial;
+		color: black;
+		text-align: center;
+		padding: 30px;
+		margin-top: 0px;
+	}
+
+	p {
+		font-family: Arial;
+	}
+
+	label {
+		font-family: Arial;
+	}
+
+	button {
+	    background-color: #AFEEEE;
+	    border: none;
+	    color: black;
+	    padding: 10px 20px;
+	    text-align: center;
+	    text-decoration: none;
+	    display: inline-block;
+		font-family: Arial;
+		font-size: 12;
+	}
+
+	/* styling for checkbox from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
+	 /* Customize the label (the container) */
+	.container {
+	  display: block;
+	  position: relative;
+	  padding-left: 35px;
+	  margin-bottom: 12px;
+	  cursor: pointer;
+	  font-size: 14 px;
+	  -webkit-user-select: none;
+	  -moz-user-select: none;
+	  -ms-user-select: none;
+	  user-select: none;
+	}
+
+	/* Hide the browser's default checkbox */
+	.container input {
+	  position: absolute;
+	  opacity: 0;
+	  cursor: pointer;
+	}
+
+	/* Create a custom checkbox */
+	.checkmark {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  height: 25px;
+	  width: 25px;
+	  background-color: #eee;
+	}
+
+	/* On mouse-over, add a grey background color */
+	.container:hover input ~ .checkmark {
+	  background-color: #ccc;
+	}
+
+	/* When the checkbox is checked, add a blue background */
+	.container input:checked ~ .checkmark {
+	  background-color: #2196F3;
+	}
+
+	/* Create the checkmark/indicator (hidden when not checked) */
+	.checkmark:after {
+	  content: "";
+	  position: absolute;
+	  display: none;
+	}
+
+	/* Show the checkmark when checked */
+	.container input:checked ~ .checkmark:after {
+	  display: block;
+	}
+
+	/* Style the checkmark/indicator */
+	.container .checkmark:after {
+	  left: 9px;
+	  top: 5px;
+	  width: 5px;
+	  height: 10px;
+	  border: solid white;
+	  border-width: 0 3px 3px 0;
+	  -webkit-transform: rotate(45deg);
+	  -ms-transform: rotate(45deg);
+	  transform: rotate(45deg);
+	} 
 </style>
 <html>
  <head>
@@ -15,25 +111,40 @@
  </div>
  <body>
  	<p>Select colleges to compare</p>
- 	<input type="checkbox" class="collegeBox" value="Smith College">Smith College
- 	<input type="checkbox" class="collegeBox" value="Mount Holyoke College">Mount Holyoke College
- 	<input type="checkbox" class="collegeBox" value="Amherst College">Amherst College
- 	<input type="checkbox" class="collegeBox" value="University of Massachusetts-Amherst">University of Massachusetts-Amherst
- 	<input type="checkbox" class="collegeBox" value="Hampshire College">Hampshire College
+ 	<label class="container">Smith College
+ 		<input type="checkbox" class="collegeBox" value="Smith College">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">Mount Holyoke College
+		<input type="checkbox" class="collegeBox" value="Mount Holyoke College">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">Amherst College
+ 		<input type="checkbox" class="collegeBox" value="Amherst College">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">University of Massachusetts-Amherst
+		<input type="checkbox" class="collegeBox" value="University of Massachusetts-Amherst">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">Hampshire College
+		<input type="checkbox" class="collegeBox" value="Hampshire College">
+		<span class="checkmark"></span>
+ 	</label>
 
  	<p>Select years of attendance</p> <!-- change to select start yr??? -->
- 	<input type="checkbox" class="yearBox" value="2009-2010">2009-2010
- 	<input type="checkbox" class="yearBox" value="2010-2011">2010-2011
- 	<input type="checkbox" class="yearBox" value="2011-2012">2011-2012
- 	<input type="checkbox" class="yearBox" value="2012-2013">2012-2013
- 	<input type="checkbox" class="yearBox" value="2013-2014">2013-2014
- 	<input type="checkbox" class="yearBox" value="2014-2015">2014-2015
- 	<input type="checkbox" class="yearBox" value="2015-2016">2015-2016
- 	<input type="checkbox" class="yearBox" value="2016-2017">2016-2017
- 	<input type="checkbox" class="yearBox" value="2017-2018">2017-2018
- 	<input type="checkbox" class="yearBox" value="2018-2019">2018-2019
+ 	<input type="checkbox" class="yearBox" value="2009-2010"/><label for="checkbox">2009-2010</label>
+ 	<input type="checkbox" class="yearBox" value="2010-2011"/><label for="checkbox">2010-2011</label>
+ 	<input type="checkbox" class="yearBox" value="2011-2012"/><label for="checkbox">2011-2012</label>
+ 	<input type="checkbox" class="yearBox" value="2012-2013"/><label for="checkbox">2012-2013</label>
+ 	<input type="checkbox" class="yearBox" value="2013-2014"/><label for="checkbox">2013-2014</label>
+ 	<input type="checkbox" class="yearBox" value="2014-2015"/><label for="checkbox">2014-2015</label>
+ 	<input type="checkbox" class="yearBox" value="2015-2016"/><label for="checkbox">2015-2016</label>
+ 	<input type="checkbox" class="yearBox" value="2016-2017"/><label for="checkbox">2016-2017</label>
+ 	<input type="checkbox" class="yearBox" value="2017-2018"/><label for="checkbox">2017-2018</label>
+ 	<input type="checkbox" class="yearBox" value="2018-2019"/><label for="checkbox">2018-2019</label>
 
- 	<svg width="850" height="330"></svg>
+ 	<svg width="850" height="430"></svg>
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  	<script src="https://d3js.org/d3.v4.min.js"></script>
  	<script>
@@ -66,7 +177,7 @@
 			    .rangeRound([height, 0]);
 
 			let z = d3.scaleOrdinal()
-			    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+			    .range(["#007791", "#0018A8", "#1F75FE", "#89CFF0"]); //"#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"
 
 			d3.csv("collegeData.csv", function(d, i, columns) {
 			  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
