@@ -16,6 +16,7 @@
 
 	p {
 		font-family: Arial;
+		font-size: 12;
 	}
 
 	label {
@@ -100,16 +101,23 @@
 	  -ms-transform: rotate(45deg);
 	  transform: rotate(45deg);
 	} 
+
+	.buttonDiv {
+		float: right;
+	}
+	.checkboxes {
+		float: right;
+	}
 </style>
 <html>
  <head>
  	<meta charset="utf-8">
  	<h1>College Cost Comparison</h1>
  </head>
- <div>
- 	<button>See projected college costs</button>
+ <div class="buttonDiv">
+ 	
  </div>
- <body>
+ <div class="checkboxes">
  	<p>Select colleges to compare</p>
  	<label class="container">Smith College
  		<input type="checkbox" class="collegeBox" value="Smith College">
@@ -133,17 +141,42 @@
  	</label>
 
  	<p>Select years of attendance</p> <!-- change to select start yr??? -->
- 	<input type="checkbox" class="yearBox" value="2009-2010"/><label for="checkbox">2009-2010</label>
- 	<input type="checkbox" class="yearBox" value="2010-2011"/><label for="checkbox">2010-2011</label>
- 	<input type="checkbox" class="yearBox" value="2011-2012"/><label for="checkbox">2011-2012</label>
- 	<input type="checkbox" class="yearBox" value="2012-2013"/><label for="checkbox">2012-2013</label>
- 	<input type="checkbox" class="yearBox" value="2013-2014"/><label for="checkbox">2013-2014</label>
- 	<input type="checkbox" class="yearBox" value="2014-2015"/><label for="checkbox">2014-2015</label>
- 	<input type="checkbox" class="yearBox" value="2015-2016"/><label for="checkbox">2015-2016</label>
- 	<input type="checkbox" class="yearBox" value="2016-2017"/><label for="checkbox">2016-2017</label>
- 	<input type="checkbox" class="yearBox" value="2017-2018"/><label for="checkbox">2017-2018</label>
- 	<input type="checkbox" class="yearBox" value="2018-2019"/><label for="checkbox">2018-2019</label>
-
+ 	<label class="container">2009-2010
+ 		<input type="checkbox" class="yearBox" value="2009-2010">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">2010-2011
+		<input type="checkbox" class="yearBox" value="2010-2011">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">2011-2012
+ 		<input type="checkbox" class="yearBox" value="2011-2012">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">2012-2013
+		<input type="checkbox" class="yearBox" value="2012-2013">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">2013-2014
+		<input type="checkbox" class="yearBox" value="2013-2014">
+		<span class="checkmark"></span>
+ 	</label>
+ 	</label>
+ 	<label class="container">2014-2015
+ 		<input type="checkbox" class="yearBox" value="2014-2015">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">2015-2016
+		<input type="checkbox" class="yearBox" value="2015-2016">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">2017-2018
+		<input type="checkbox" class="yearBox" value="2017-2018">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<button>See projected college costs</button>
+ </div>
+ <body>
  	<svg width="850" height="430"></svg>
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  	<script src="https://d3js.org/d3.v4.min.js"></script>
