@@ -6,9 +6,9 @@
 	}
 
 	h1 {
-		background: linear-gradient(#AFEEEE, #B2FFFF);
+		background: #2196F3; /* linear-gradient(#AFEEEE, #B2FFFF); */
 		font-family: Arial;
-		color: black;
+		color: white;
 		text-align: center;
 		padding: 30px;
 		margin-top: 0px;
@@ -24,9 +24,9 @@
 	}
 
 	button {
-    background-color: #AFEEEE;
+    background-color: #2196F3;
     border: none;
-    color: black;
+    color: white;
     padding: 10px 20px;
     text-align: center;
     text-decoration: none;
@@ -40,7 +40,7 @@
 	}
 
 	button:hover {
-		background-color: #d8ffff;
+		background-color: #2fa3ff;
 	}
 
 	/* checkbox styling adapted from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
@@ -114,12 +114,17 @@
 	} 
 
 	.selections {
-		float: right;
+		margin-left: 12px;
+		float: left;
 	}
 
 	.optionMenu {
 		margin-bottom: 12px;
 		cursor: pointer;
+	}
+
+	svg {
+		float: right;
 	}
 </style>
 <html>
@@ -163,7 +168,7 @@
 		<option>2018-2019</option>
  	</select>
  	<br>
- 	<button>See projected college costs</button>
+ 	<button>See projected cost</button>
  </div>
  <body>
  	<svg width="850" height="430"></svg>
