@@ -33,9 +33,17 @@
     display: inline-block;
 		font-family: Arial;
 		font-size: 12;
+		transition: background .25s ease-in-out;
+	  -moz-transition: background .25s ease-in-out;
+	  -webkit-transition: background .25s ease-in-out;
+	  cursor: pointer;
 	}
 
-	/* checkbox styling from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
+	button:hover {
+		background-color: #d8ffff;
+	}
+
+	/* checkbox styling adapted from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
 	 /* Customize the label (the container) */
 	.container {
 	  display: block;
@@ -65,6 +73,9 @@
 	  height: 25px;
 	  width: 25px;
 	  background-color: #eee;
+	  transition: background .25s ease-in-out;
+   -moz-transition: background .25s ease-in-out;
+   -webkit-transition: background .25s ease-in-out;
 	}
 
 	/* On mouse-over, add a grey background color */
@@ -108,6 +119,7 @@
 
 	.optionMenu {
 		margin-bottom: 12px;
+		cursor: pointer;
 	}
 </style>
 <html>
@@ -161,10 +173,11 @@
  		//"use strict";
  		let searchBtn = document.querySelector('button');
  		searchBtn.onclick = selectCollege;
+ 		//d3.selectAll('.collegeBox').on('change', drawChart());
+ 		//d3.select('#startYr').on('change', drawChart());
 
 		function selectCollege(e) {
 			e.preventDefault();
-			d3.selectAll('.collegeBox').on('change', drawChart());
 			drawChart();
 		 }
 
@@ -187,7 +200,7 @@
 			    .rangeRound([height, 0]);
 
 			let z = d3.scaleOrdinal()
-			    .range(["#007791", "#0018A8", "#1F75FE", "#89CFF0"]);
+			    .range(["#191970", "#0018A8", "#1F75FE", "#89CFF0"]);
 
 			d3.csv("collegeData.csv", function(d, i, columns) {
 			  for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
@@ -262,7 +275,12 @@
 			      .attr("x", function(d) { return x(d.data.INSTNM); })
 			      .attr("y", function(d) { return y(d[1]); })
 			      .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-			      .attr("width", x.bandwidth());
+			      .attr("width", x.bandwidth())
+			      .attr('opacity', 0)
+			      .transition()
+                .delay(function(d,i){return i *200;})
+                .duration(200)
+                .attr("opacity", 1);
 
 			  g.append("g")
 			      .attr("class", "axis")
@@ -278,7 +296,11 @@
 			      .attr("dy", "0.32em")
 			      .attr("fill", "#000")
 			      .attr("text-anchor", "start")
-			      .text("Total Estimated Cost of Attendance");
+			      .text("Total Estimated Cost of Attendance")
+			      .transition()
+                .delay(function(d,i){return i *200;})
+                .duration(200)
+                .attr("opacity", 1);
 
 			  let legend = g.append("g")
 			      .attr("font-family", "sans-serif")
@@ -293,13 +315,21 @@
 			      .attr("x", width - 19)
 			      .attr("width", 19)
 			      .attr("height", 19)
-			      .attr("fill", z);
+			      .attr("fill", z)
+			      .transition()
+                .delay(function(d,i){return i *200;})
+                .duration(200)
+                .attr("opacity", 1);
 
 			  legend.append("text")
 			      .attr("x", width - 24)
 			      .attr("y", 9.5)
 			      .attr("dy", "0.32em")
-			      .text(function(d) { return d; });
+			      .text(function(d) { return d; })
+			      .transition()
+                .delay(function(d,i){return i *200;})
+                .duration(200)
+                .attr("opacity", 1);
 		});
 		}
  	</script>
