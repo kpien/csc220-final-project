@@ -1,0 +1,69 @@
+---
+title: "collegeData"
+author: "Heidi Tsang"
+date: "4/22/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(oilabs)
+library(readxl)
+collegeData <- read_excel("collegeData.xlsx")
+```
+
+
+```{r pressure, echo=FALSE}
+qplot(data = collegeData, x = Year, y = Umass, geom = "point")+geom_smooth(method = "lm", se = FALSE)
+fit<-lm(Year~Umass, data = collegeData)
+summary(fit)
+```
+
+Function for Year = 1988+0.001009Umass
+            (Year - 1988)/0.001009 = Umass
+
+```{r}
+
+qplot(data = collegeData, x = Year, y = SC, geom = "point")+geom_smooth(method = "lm", se = FALSE)
+fit<-lm(Year~SC, data = collegeData)
+summary(fit)
+```
+year = 1983+0.00052SC
+
+(year-1983)/0.00052 = SC
+```{r}
+
+qplot(data = collegeData, x = Year, y = MHC, geom = "point")+geom_smooth(method = "lm", se = FALSE)
+fit<-lm(Year~MHC, data = collegeData)
+summary(fit)
+
+```
+Year = 1961+0.0009341MHC
+(year-1961)/0.0009341 = MHC
+
+
+```{r}
+
+
+qplot(data = collegeData, x = Year, y = HC, geom = "point")+geom_smooth(method = "lm", se = FALSE)
+fit<-lm(Year~HC, data = collegeData)
+summary(fit)
+
+```
+
+Year = 1985+0.0004805HC
+(Year-1985)/0.0004805 = HC
+
+```{r}
+
+
+qplot(data = collegeData, x = Year, y = AC, geom = "point")+geom_smooth(method = "lm", se = FALSE)
+fit<-lm(Year~AC, data = collegeData)
+summary(fit)
+
+
+```
+Year = 1988+0.0004273AC
+(year-1988)/0.0004273 = AC
