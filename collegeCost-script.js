@@ -1,7 +1,7 @@
 //"use strict";
 //$('input[type=checkbox]').removeAttr('checked');
 let searchBtn = document.querySelector('button');
-searchBtn.onclick = selectCollege;
+searchBtn.onclick = findSelections;
 //d3.selectAll('.collegeBox').on('change', drawChart());
 //d3.select('#startYr').on('change', drawChart());
 let selectedColleges = [];
@@ -10,12 +10,8 @@ let filteredData;
 // let lastSelectedColleges;
 // let lastSelectedYears;
 
-function selectCollege(e) {
+function findSelections(e) {
 	e.preventDefault();
-	findSelections();
-}
-
-function findSelections() {
 	//clear prior selections
 	selectedColleges = [];
 	selectedYears = [];
@@ -168,7 +164,7 @@ function drawChart() {
   let keys = selectedYears;
 
   filteredData.sort(function(a, b) { return b.total - a.total; });
-  x.domain(filteredData.map(function(d) { return d.INSTNM; }));
+  x.domain(filteredData.map(function(d) { return d.INSTNM;}));
   y.domain([0, d3.max(filteredData, function(d) { return d.total; })]).nice();
   z.domain(keys);
 
@@ -180,15 +176,21 @@ function drawChart() {
     .selectAll("rect")
     .data(function(d) { return d; })
     .enter().append("rect")
+      .on('mouseover', function(d) {
+      	d3.select("#totalCostBox").html("Total Projected Cost of Attending " + "<br>" + d["data"].INSTNM + ": $" + Math.round(d["data"].total).toString());
+      })
+      .on('mouseout', function(d) {
+      	d3.select("#totalCostBox").html("");
+      })
       .attr("x", function(d) { return x(d.data.INSTNM); })
       .attr("y", function(d) { return y(d[1]); })
       .attr("height", function(d) { return y(d[0]) - y(d[1]); })
       .attr("width", x.bandwidth())
       .attr('opacity', 0)
       .transition()
-    .delay(function(d,i){return i *200;})
-    .duration(200)
-    .attr("opacity", 1);
+      	.delay(function(d,i){return i *200;})
+      	.duration(200)
+      	.attr("opacity", 1);
 
   g.append("g")
       .attr("class", "axis")
@@ -204,11 +206,11 @@ function drawChart() {
       .attr("dy", "0.32em")
       .attr("fill", "#000")
       .attr("text-anchor", "start")
-      .text("Total Estimated Cost of Attendance")
+      .text("Total Projected Cost of Attendance")
       .transition()
-    .delay(function(d,i){return i *200;})
-    .duration(200)
-    .attr("opacity", 1);
+	    .delay(function(d,i){return i *200;})
+	    .duration(200)
+	    .attr("opacity", 1);
 
   let legend = g.append("g")
       .attr("font-family", "sans-serif")

@@ -123,3 +123,13 @@ button:hover {
 svg {
 	float: right;
 }
+
+.box {
+	position: fixed;
+	bottom: 100px;
+	float: left;
+	border: 1px solid #DCDCDC;
+    padding: 10px;
+    line-height: 1;
+    font-family: Arial;
+}
