@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--Heidi Tsang & Kelly Pien-->
+<html>
+ <head>
+ 	<meta charset="utf-8">
+ 	<link rel="stylesheet" href="comparison.css" type="text/css">
+ 	<h1>College Comparison</h1>
+ </head>
+  	<div class="topnav">
+ 		<a href="schoolinfo.html">General Info</a>
+ 		<a class="active" href="cost.html">Projected Costs</a>
+ 	</div>
+ <div class="selections">
+ 	<p>Select colleges to compare:</p>
+ 	 	<label class="container">Amherst College
+ 		<input type="checkbox" class="collegeBox" value="Amherst College">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">Hampshire College
+		<input type="checkbox" class="collegeBox" value="Hampshire College">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">Mount Holyoke College
+		<input type="checkbox" class="collegeBox" value="Mount Holyoke College">
+		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">Smith College
+ 		<input type="checkbox" class="collegeBox" value="Smith College">
+ 		<span class="checkmark"></span>
+ 	</label>
+ 	<label class="container">University of Massachusetts-Amherst
+		<input type="checkbox" class="collegeBox" value="University of Massachusetts-Amherst">
+		<span class="checkmark"></span>
+ 	</label>
+
+ 	<label for="startYr">Select start year:</label>
+ 	<select id="startYr" class="optionMenu">
+ 		<option>2014-2015</option>
+ 		<option>2015-2016</option>
+ 		<option>2016-2017</option>
+ 		<option>2017-2018</option>
+		<option>2018-2019</option>
+		<option>2019-2020</option>
+ 		<option>2020-2021</option>
+ 		<option>2021-2022</option>
+ 		<option>2022-2023</option>
+ 		<option>2023-2024</option>
+ 	</select>
+ 	<br>
+ 	<button>See projected cost</button>
+ </div>
+ <body>
+ 	<svg width="850" height="500"></svg>
+ 	<div id="totalCostBox" class="box"></div>
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ 	<script src="https://d3js.org/d3.v4.min.js"></script>
+ 	<script src="cost-script.js"></script>
+ </body>
+</html>
