@@ -49,49 +49,21 @@ function findSelections(e) {
 }
 
 function projectCost(school, year) {
+	let projectedCost;
+
 	if (school == "Amherst College") {
-		return projectAmherstCost(year);
-	}
-	else if (school == "Hampshire College") {
-		return projectHampCost(year);
-	}
-
-	else if (school == "Mount Holyoke College") {
-		return projectMoHoCost(year);
-	}
-
-	else if (school == "Smith College") {
-		return projectSmithCost(year);
+		projectedCost = (year-1988)/0.0004273;
+	} else if (school == "Hampshire College") {
+		projectedCost = (year-1985)/0.0004805;
+	} else if (school == "Mount Holyoke College") {
+		projectedCost = (year-1961)/0.0009341;
+	} else if (school == "Smith College") {
+		projectedCost = (year-1983)/0.00052;
+	} else if (school == "University of Massachusetts-Amherst") {
+		projectedCost = (year - 1988)/0.001009;
 	}
 
-	else if (school == "University of Massachusetts-Amherst") {
-		return projectUMassCost(year);
-	}
-
-	function projectAmherstCost(year) { 
-		let projectedCost = (year-1988)/0.0004273;
-		return projectedCost;
-	}
-
-	function projectHampCost(year) {
-		let projectedCost = (year-1985)/0.0004805;
-		return projectedCost;
-	}
-
-	function projectMoHoCost(year) {
-		let projectedCost = (year-1961)/0.0009341;
-		return projectedCost;
-	}
-
-	function projectSmithCost(year) {
-		let projectedCost = (year-1983)/0.00052;
-		return projectedCost;
-	}
-
-	function projectUMassCost(year) { 
-		let projectedCost = (year - 1988)/0.001009;
-		return projectedCost;
-	}
+	return projectedCost;
 }
 
 function drawChart() {
@@ -145,8 +117,7 @@ function drawChart() {
 				let yearCost = schoolData[schoolYr];
 				yrFilteredOneCollegeData[schoolYr] = yearCost;
 				selCosts.push(yearCost);
-			}
-			else {
+			} else {
 				let year = parseInt(schoolYr.split("-")[0]);
 				let yearProjectedCost = projectCost(filteredData[j]["INSTNM"], year);
 				yrFilteredOneCollegeData[schoolYr] = yearProjectedCost;
