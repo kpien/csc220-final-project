@@ -109,17 +109,18 @@ function drawChart() {
 	let yrFilteredData = [];
 	for(let j = 0; j < filteredData.length; j++) {
 		let schoolData = filteredData[j];
-		let yrFilteredOneCollegeData = {"INSTNM": schoolData["INSTNM"]};
+		let schoolName = schoolData["INSTNM"];
+		let yrFilteredOneCollegeData = {"INSTNM": schoolName};
 		let selCosts = [];
 		for(let k = 0; k < selectedYears.length; k++) {
 			let schoolYr = selectedYears[k];
-			if(schoolYr in schoolData) {
+			if(schoolYr in schoolData) { //if cost data for req yr is in dataset
 				let yearCost = schoolData[schoolYr];
 				yrFilteredOneCollegeData[schoolYr] = yearCost;
 				selCosts.push(yearCost);
-			} else {
+			} else { //need to compute projected cost
 				let year = parseInt(schoolYr.split("-")[0]);
-				let yearProjectedCost = projectCost(filteredData[j]["INSTNM"], year);
+				let yearProjectedCost = projectCost(schoolName, year);
 				yrFilteredOneCollegeData[schoolYr] = yearProjectedCost;
 				selCosts.push(yearProjectedCost);
 			}
