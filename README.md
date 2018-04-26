@@ -1,4 +1,6 @@
 # csc220-final-project
+## College Comparison
+by Heidi Tsang & Kelly Pien
 ## Instructions
 Run local server from command line.
 ### General School Info
