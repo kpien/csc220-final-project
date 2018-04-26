@@ -6,6 +6,7 @@ let selectedYears = [];
 let filteredData;
 
 function findSelections(e) {
+	//find checked colleges and years of attendance from selected start year
 	e.preventDefault();
 	//clear prior selections
 	selectedColleges = [];
@@ -30,6 +31,7 @@ function findSelections(e) {
 }
 
 function projectCost(school, year) {
+	//find projected cost for one school year given school and fall year
 	let projectedCost;
 	if (school == "Amherst College") {
 		projectedCost = (year-1988)/0.0004273;
@@ -46,6 +48,8 @@ function projectCost(school, year) {
 }
 
 function drawChart() {
+	//draw stacked bar chart
+
 	//remove prior graph
 	d3.selectAll("svg > *").remove();
 
